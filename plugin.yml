@@ -1,0 +1,6 @@
+---
+name: MassiveEvent
+version: 1.0.0
+main: Zedstar16\MassiveEvent\Loader
+api: 4.0.0
+...
