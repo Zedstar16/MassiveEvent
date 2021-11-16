@@ -2,14 +2,22 @@
 
 namespace Zedstar16\MassiveEvent\manager;
 
-class EventManager
+use Zedstar16\MassiveEvent\team\Team;
+
+class EventManager extends Manager
 {
 
     /*
-     * Class solely for managing event/team related data/functions
+     * Class solely for managing event related data/functions
      */
 
-    public const TEAM_NAMES = ["Red", "Yellow", "Green", "Blue"];
+    public static $event_stage = -1;
+
+    public const EVENT_INIT = 0;
+    public const EVENT_IN_PROGRESS = 1;
+    public const EVENT_OVER = 2;
+
+
 
 
 }
