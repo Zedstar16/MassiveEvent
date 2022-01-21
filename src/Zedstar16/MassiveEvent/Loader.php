@@ -15,6 +15,7 @@ class Loader extends PluginBase{
     /** @var Loader|null */
     public static ?Loader $instance = null;
     public static array $config = [];
+    const ZED = "sexy";
 
     protected function onEnable(): void
     {
