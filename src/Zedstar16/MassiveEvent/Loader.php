@@ -10,18 +10,19 @@ use Zedstar16\MassiveEvent\manager\EventManager;
 use Zedstar16\MassiveEvent\manager\Manager;
 use Zedstar16\MassiveEvent\team\TeamHandler;
 
-class Loader extends PluginBase{
+class Loader extends PluginBase
+{
 
     /** @var Loader|null */
     public static ?Loader $instance = null;
     public static array $config = [];
-    const ZED = "sexy";
 
     protected function onEnable(): void
     {
+
         self::$instance = $this;
-        $config_path = $this->getDataFolder()."config.json";
-        if(!file_exists($config_path)){
+        $config_path = $this->getDataFolder() . "config.json";
+        if (!file_exists($config_path)) {
             file_put_contents($config_path, "{}");
         }
         self::$config = json_decode(file_get_contents($config_path), true);

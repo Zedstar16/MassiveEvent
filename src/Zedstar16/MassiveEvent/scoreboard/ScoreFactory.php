@@ -1,6 +1,7 @@
 <?php
 
-use JetBrains\PhpStorm\Pure;
+namespace Zedstar16\MassiveEvent\scoreboard;
+
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
@@ -84,7 +85,7 @@ class ScoreFactory{
      * @param Player $player
      * @return bool
      */
-    #[Pure] public static function hasScore(Player $player): bool{
+    public static function hasScore(Player $player): bool{
         return isset(self::$scoreboards[$player->getName()]);
     }
 

@@ -14,12 +14,21 @@ class Manager
      */
 
     private static Manager $instance;
-    /** @var Session[] */
-    private array $sessions;
+
+    private SessionManager $sessionManager;
+    private KitManager $kitManager;
+    private EventManager $eventManager;
 
     public function __construct()
     {
         self::$instance = $this;
+        $this->registerChildManagers();
+    }
+
+    private function registerChildManagers(){
+        $this->sessionManager = new SessionManager();
+        $this->kitManager = new KitManager();
+        $this->eventManager = new EventManager();
     }
 
     public static function getInstance(): Manager
@@ -27,29 +36,16 @@ class Manager
         return self::$instance;
     }
 
-    public function addSession(Player $player)
-    {
-        $team_handler = TeamHandler::getInstance();
-
-        $team = $team_handler->hasTeamAssigned($player) ? $team_handler->getAssignedTeam($player) : $team_handler->assignTeam($player);
-        $session = new Session($player, $team->getTeamId());
-
-        // Key as player name for easy access to retrieving a session
-        $this->sessions[$player->getName()] = $session;
+    public function getSessionManager() : SessionManager{
+        return $this->sessionManager;
     }
 
-    public function getSession(Player $player): Session
-    {
-        return $this->sessions[$player->getName()];
+    public function getKitManager() : KitManager{
+        return $this->kitManager;
     }
 
-    public function removeSession(Player $player)
-    {
-        $username = $player->getName();
-        if (isset($this->sessions[$username])) {
-            unset($this->sessions[$username]);
-        }
+    public function getEventManager() : EventManager{
+        return $this->eventManager;
     }
-
 
 }

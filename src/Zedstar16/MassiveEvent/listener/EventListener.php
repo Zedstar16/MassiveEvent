@@ -23,7 +23,7 @@ class EventListener implements Listener
         $subject = $event->getEntity();
         if ($subject instanceof Player) {
             if (($subject->getHealth() - $event->getFinalDamage()) <= 0) {
-                Manager::getInstance()->getSession($subject)->handleDeath();
+                Manager::getInstance()->getSessionManager()->getSession($subject)->handleDeath();
                 $event->cancel();
             }
         }
@@ -47,12 +47,17 @@ class EventListener implements Listener
     public function onJoin(PlayerJoinEvent $event)
     {
         $player = $event->getPlayer();
-        Manager::getInstance()->addSession($player);
+        $sessionManager = Manager::getInstance()->getSessionManager();
+        if($sessionManager->getSession($player) === null) {
+            $sessionManager->addSession($player);
+        }
     }
+
+
 
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
-        Manager::getInstance()->removeSession($player);
+     //   Manager::getInstance()->removeSession($player);
     }
 
 

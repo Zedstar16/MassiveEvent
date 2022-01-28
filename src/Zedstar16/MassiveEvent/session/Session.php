@@ -7,7 +7,7 @@ use pocketmine\player\Player;
 use Zedstar16\MassiveEvent\Loader;
 use Zedstar16\MassiveEvent\manager\EventManager;
 use Zedstar16\MassiveEvent\manager\Manager;
-use Zedstar16\MassiveEvent\scoreboard\Scoreboard;
+use Zedstar16\MassiveEvent\scoreboard\ScoreFactory;
 use Zedstar16\MassiveEvent\tasks\DeathTitleTask;
 use Zedstar16\MassiveEvent\team\Team;
 use Zedstar16\MassiveEvent\team\TeamHandler;
@@ -16,6 +16,7 @@ class Session
 {
     private Player $player;
 
+
     public int $team_id;
 
     public function __construct(Player $player, $team_id){
@@ -23,8 +24,10 @@ class Session
         $this->team_id = $team_id;
     }
 
-    public function getScoreboard() : Scoreboard{
-        // TODO
+
+
+    public function updateScoreboard(){
+        ScoreFactory::setScore($this->player, "");
     }
 
     public function handleDeath(){
