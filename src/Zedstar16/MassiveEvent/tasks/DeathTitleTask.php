@@ -23,7 +23,9 @@ class DeathTitleTask extends Task
     {
         if($this->tick === self::RESPAWN_TIME){
             $this->player->sendTitle("§aRespawning...");
-            $position = Manager::getInstance()->getSessionManager()->getSession($this->player)->getTeam()->getRandomSpawnPosition();
+            $session = Manager::getInstance()->getSessionManager()->getSession($this->player);
+            $position = $session->getTeam()->getRandomSpawnPosition();
+            $session->getSelectedKit()->setKit($this->player);
             $this->player->teleport($position);
             $this->player->setGamemode(GameMode::ADVENTURE());
             $this->getHandler()->cancel();

@@ -3,6 +3,7 @@
 namespace Zedstar16\MassiveEvent\manager;
 
 use pocketmine\player\Player;
+use Zedstar16\MassiveEvent\chat\ChatHandler;
 use Zedstar16\MassiveEvent\session\Session;
 use Zedstar16\MassiveEvent\team\TeamHandler;
 
@@ -19,13 +20,17 @@ class Manager
     private KitManager $kitManager;
     private EventManager $eventManager;
 
+    private ChatHandler $chatHandler;
+
     public function __construct()
     {
         self::$instance = $this;
         $this->registerChildManagers();
+        $this->chatHandler = new ChatHandler();
     }
 
-    private function registerChildManagers(){
+    public function registerChildManagers(){
+
         $this->sessionManager = new SessionManager();
         $this->kitManager = new KitManager();
         $this->eventManager = new EventManager();
@@ -48,4 +53,7 @@ class Manager
         return $this->eventManager;
     }
 
+    public function getChatHandler() : ChatHandler{
+        return $this->chatHandler;
+    }
 }

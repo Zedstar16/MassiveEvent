@@ -15,7 +15,8 @@ class Team
 
     private array $members = [];
 
-
+    public array $kills = [];
+    public array $deaths = [];
 
     public function __construct(int $team_id)
     {
@@ -49,6 +50,24 @@ class Team
         }
     }
 
+    public function addKill($player){
+        $username = Utils::getUsername($player);
+        if(!isset($this->kills[$username])){
+            $this->kills[$username] = 1;
+        }else{
+            $this->kills[$username]++;
+        }
+    }
+
+    public function addDeath($player){
+        $username = Utils::getUsername($player);
+        if(!isset($this->deaths[$username])){
+            $this->deaths[$username] = 1;
+        }else{
+            $this->deaths[$username]++;
+        }
+    }
+
     public function getRandomSpawnPosition(): Vector3
     {
         if(isset(Loader::$config["spawn_positions"][$this->team_id])) {
@@ -60,6 +79,8 @@ class Team
             return new Vector3(100,100,100);
         }
     }
+
+
 
 
 }

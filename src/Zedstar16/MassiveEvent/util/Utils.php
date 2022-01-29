@@ -101,17 +101,5 @@ class Utils
         } else return $item;
     }
 
-    public static function timeToComponents(){
-        $timings = array_flip(EventManager::TIMINGS);
-        if(EventManager::$event_stage === EventManager::EVENT_INIT){
-            $stage_end_time = $timings[EventManager::EVENT_IN_PROGRESS];
-            $sum = $stage_end_time - Timer::getInstance()->getHeartbeat();
-        }else{
-            $stage_end_time = $timings[EventManager::EVENT_OVER];
-            $sum = $stage_end_time - Timer::getInstance()->getHeartbeat();
-        }
-        $time = gmdate("i:s", $sum);
-        return explode(":", $time);
-    }
 
 }

@@ -9,12 +9,11 @@ use Zedstar16\MassiveEvent\team\TeamHandler;
 class SessionManager
 {
     /*
-     * Class that manages and handles all aspects of plugin
+     * Class that manages and handles player sessions
      */
 
     /** @var Session[] */
     private array $sessions;
-
 
 
     public function addSession(Player $player)
