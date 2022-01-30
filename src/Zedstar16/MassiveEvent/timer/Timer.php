@@ -42,7 +42,7 @@ class Timer
 
     public function timeToComponents()
     {
-        $timings = array_flip(EventManager::TIMINGS);
+        $timings = EventManager::TIMINGS;
         $stage_end_time = (EventManager::$event_stage === EventManager::EVENT_INIT)
             ? $timings[EventManager::EVENT_IN_PROGRESS]
             : $timings[EventManager::EVENT_OVER];

@@ -27,7 +27,11 @@ class Team
         return $this->team_id;
     }
 
-    public function getTeamName(): int
+    public function getTeamColor() : string{
+        return TeamHandler::TEAM_COLORS[$this->team_id];
+    }
+
+    public function getTeamName(): string
     {
         return TeamHandler::TEAM_NAMES[$this->team_id];
     }

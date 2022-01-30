@@ -6,9 +6,13 @@ use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\StringToEnchantmentParser;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
+use pocketmine\lang\KnownTranslationFactory;
+use pocketmine\lang\Language;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use Zedstar16\MassiveEvent\Loader;
 use Zedstar16\MassiveEvent\manager\EventManager;
+use Zedstar16\MassiveEvent\manager\Manager;
 use Zedstar16\MassiveEvent\tasks\PlayerExecTask;
 use Zedstar16\MassiveEvent\timer\Timer;
 
@@ -50,10 +54,12 @@ class Utils
      * @return string
      */
     public static function itemToString(Item $item){
+
         $store = [];
         $store[] = $item->getId();
         $store[] = $item->getMeta();
         $store[] = $item->getCount();
+       // $item->jsonSerialize();
         if ($item->hasCustomName() or $item->hasEnchantments()) {
             if ($item->hasCustomName()) {
                 $store[3] = str_replace("§", "&", $item->getCustomName());
@@ -61,12 +67,16 @@ class Utils
             if ($item->hasEnchantments()) {
                 foreach ($item->getEnchantments() as $enchantment)
                 {
-                    $store[] = $enchantment->getType()->getName();
+                   // var_dump($enchantment->getType()->getName()->getText());
+                    $ench_name = Server::getInstance()->getLanguage()->translate($enchantment->getType()->getName());
+                    $store[] =  $ench_name;
                     $store[] = $enchantment->getLevel();
                 }
             }
         }
+    //    var_dump($store);
         return implode(":", $store);
+     //   return json_encode($item->jsonSerialize());
     }
 
     /**
@@ -77,6 +87,8 @@ class Utils
      */
     public static function itemFromString(string $string): Item
     {
+       // return Item::jsonDeserialize(json_decode($string, true));
+
         $data = explode(":", $string);
         $id = (int)$data[0];
         $damage = (int)$data[1];
@@ -99,6 +111,39 @@ class Utils
                 return $item;
             } else return $item;
         } else return $item;
+
+    }
+
+    public static function translateInputMethod(int $data) : string{
+        $inputs = [
+            1 => "Mouse",
+            2 => "Touch",
+            3 => "Controller",
+            4 => "Motion Controller"
+        ];
+        return $inputs[$data] ?? "Unknown";
+    }
+
+    public static function formatHealthString(float $health){
+        $health = (int)$health;
+        $color = "§a";
+        if ($health < 16 && $health >= 12) {
+            $color = "§e";
+        } elseif ($health < 12 && $health >= 8) {
+            $color = "§6";
+        } elseif ($health < 8 && $health >= 4) {
+            $color = "§c";
+        } elseif ($health < 4 && $health >= 0) {
+            $color = "§4";
+        }
+        return "{$color}{$health}❤";
+    }
+
+    public static function formatLeaderboardPlacement(string $player, int $kills){
+        $sessionMgr = Manager::getInstance()->getSessionManager()->getSession($player);
+        if($sessionMgr !== null) {
+            return $sessionMgr->getTeam()->getTeamColor() . $player . " §f - §b" . (string)$kills;
+        }else return "";
     }
 
 

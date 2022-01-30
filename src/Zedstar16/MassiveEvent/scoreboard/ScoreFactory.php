@@ -38,19 +38,23 @@ class ScoreFactory{
      * @param string $displaySlot
      */
     public static function setScore(Player $player, string $displayName, int $slotOrder = self::SORT_ASCENDING, string $displaySlot = self::SLOT_SIDEBAR): void{
-        if(isset(self::$scoreboards[$player->getName()])){
-            self::removeScore($player);
+        try{
+        if($player->isConnected()) {
+            if (isset(self::$scoreboards[$player->getName()])) {
+                self::removeScore($player);
+            }
+
+            $pk = new SetDisplayObjectivePacket();
+            $pk->displaySlot = $displaySlot;
+            $pk->objectiveName = self::objectiveName;
+            $pk->displayName = $displayName;
+            $pk->criteriaName = self::criteriaName;
+            $pk->sortOrder = $slotOrder;
+            $player->getNetworkSession()->sendDataPacket($pk);
+
+            self::$scoreboards[$player->getName()] = self::objectiveName;
         }
-
-        $pk = new SetDisplayObjectivePacket();
-        $pk->displaySlot = $displaySlot;
-        $pk->objectiveName = self::objectiveName;
-        $pk->displayName = $displayName;
-        $pk->criteriaName = self::criteriaName;
-        $pk->sortOrder = $slotOrder;
-        $player->getNetworkSession()->sendDataPacket($pk);
-
-        self::$scoreboards[$player->getName()] = self::objectiveName;
+        }catch (\Throwable $err){}
     }
 
     /**
@@ -59,15 +63,18 @@ class ScoreFactory{
      * @param Player $player
      */
     public static function removeScore(Player $player): void{
-        $objectiveName = self::objectiveName;
+        try {
+            if ($player->isConnected()) {
+                $objectiveName = self::objectiveName;
+                $pk = new RemoveObjectivePacket();
+                $pk->objectiveName = $objectiveName;
+                $player->getNetworkSession()->sendDataPacket($pk);
 
-        $pk = new RemoveObjectivePacket();
-        $pk->objectiveName = $objectiveName;
-        $player->getNetworkSession()->sendDataPacket($pk);
-
-        if(isset(self::$scoreboards[($player->getName())])){
-            unset(self::$scoreboards[$player->getName()]);
-        }
+                if (isset(self::$scoreboards[($player->getName())])) {
+                    unset(self::$scoreboards[$player->getName()]);
+                }
+            }
+        }catch (\Throwable $err){}
     }
 
     /**
@@ -97,26 +104,30 @@ class ScoreFactory{
      * @param string $message
      */
     public static function setScoreLine(Player $player, int $line, string $message): void{
-        if(!isset(self::$scoreboards[$player->getName()])){
-            Server::getInstance()->getLogger()->error("Cannot set a score to a player with no scoreboard");
-            return;
-        }
-        if($line < self::MIN_LINES || $line > self::MAX_LINES){
-            Server::getInstance()->getLogger()->error("Score must be between the value of " . self::MIN_LINES .  " to " . self::MAX_LINES . ".");
-            Server::getInstance()->getLogger()->error($line . " is out of range");
-            return;
-        }
+        try{
+        if($player->isConnected()) {
+            if (!isset(self::$scoreboards[$player->getName()])) {
+                Server::getInstance()->getLogger()->error("Cannot set a score to a player with no scoreboard");
+                return;
+            }
+            if ($line < self::MIN_LINES || $line > self::MAX_LINES) {
+                Server::getInstance()->getLogger()->error("Score must be between the value of " . self::MIN_LINES . " to " . self::MAX_LINES . ".");
+                Server::getInstance()->getLogger()->error($line . " is out of range");
+                return;
+            }
 
-        $entry = new ScorePacketEntry();
-        $entry->objectiveName = self::objectiveName;
-        $entry->type = $entry::TYPE_FAKE_PLAYER;
-        $entry->customName = $message;
-        $entry->score = $line;
-        $entry->scoreboardId = $line;
+            $entry = new ScorePacketEntry();
+            $entry->objectiveName = self::objectiveName;
+            $entry->type = $entry::TYPE_FAKE_PLAYER;
+            $entry->customName = $message;
+            $entry->score = $line;
+            $entry->scoreboardId = $line;
 
-        $pk = new SetScorePacket();
-        $pk->type = $pk::TYPE_CHANGE;
-        $pk->entries[] = $entry;
-        $player->getNetworkSession()->sendDataPacket($pk);
+            $pk = new SetScorePacket();
+            $pk->type = $pk::TYPE_CHANGE;
+            $pk->entries[] = $entry;
+            $player->getNetworkSession()->sendDataPacket($pk);
+        }
+        }catch (\Throwable $err){}
     }
 }

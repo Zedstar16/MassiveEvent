@@ -14,9 +14,8 @@ class KitConfirmForm extends BaseForm
 
     public function __construct(Player $player, string $kit)
     {
-        parent::__construct($player);
         $this->kit = $kit;
-
+        parent::__construct($player);
     }
 
     public function sendForm()

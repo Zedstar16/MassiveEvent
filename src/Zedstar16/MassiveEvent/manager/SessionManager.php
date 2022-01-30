@@ -5,6 +5,7 @@ namespace Zedstar16\MassiveEvent\manager;
 use pocketmine\player\Player;
 use Zedstar16\MassiveEvent\session\Session;
 use Zedstar16\MassiveEvent\team\TeamHandler;
+use Zedstar16\MassiveEvent\util\Utils;
 
 class SessionManager
 {
@@ -13,7 +14,7 @@ class SessionManager
      */
 
     /** @var Session[] */
-    private array $sessions;
+    private array $sessions = [];
 
 
     public function addSession(Player $player)
@@ -32,10 +33,14 @@ class SessionManager
         return $this->sessions;
     }
 
-
-    public function getSession(Player $player): ?Session
+    /**
+     * @param Player|String $player
+     * @return Session|null
+     */
+    public function getSession(Player|String $player): ?Session
     {
-        return $this->sessions[$player->getName()] ?? null;
+        $player = Utils::getUsername($player);
+        return $this->sessions[$player] ?? null;
     }
 
 

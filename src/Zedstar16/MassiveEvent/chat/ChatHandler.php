@@ -21,25 +21,29 @@ class ChatHandler
      * @return array
      */
     public function processMessage(Player $player, string $message) : array{
-        $result = [];
         $username = $player->getName();
+
         if(!isset($this->last_messages[$username])){
+            $this->last_messages[$username] = $message;
             return [true];
         }
-        if(similar_text($this->last_messages[$username], $message) > 80){
+        similar_text($this->last_messages[$username], $message, $percent);
+        if($percent > 75){
             return [false, "§cYour message is too similar to your previous message"];
         }
+        $this->last_messages[$username] = $message;
 
-        if(!$this->cooldowns[$username]){
+        if(!isset($this->cooldowns[$username])){
             $this->cooldowns[$username] = microtime(true);
             return [true];
         }
+
         $cd = microtime(true) - $this->cooldowns[$username];
-        if($cd > 1){
+        if($cd < 1.5){
+            return [false, "§cPlease wait another §f".round($cd, 1)."s §cbefore attempting this action again"];
+        }else{
             $this->cooldowns[$username] = microtime(true);
             return [true];
-        }else{
-            return [false, "§cPlease wait another §f".round($cd, 1)."s §cbefore attempting this action again"];
         }
     }
 

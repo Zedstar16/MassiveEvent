@@ -21,19 +21,22 @@ class DeathTitleTask extends Task
 
     public function onRun(): void
     {
-        if($this->tick === self::RESPAWN_TIME){
-            $this->player->sendTitle("§aRespawning...");
-            $session = Manager::getInstance()->getSessionManager()->getSession($this->player);
-            $position = $session->getTeam()->getRandomSpawnPosition();
-            $session->getSelectedKit()->setKit($this->player);
-            $this->player->teleport($position);
-            $this->player->setGamemode(GameMode::ADVENTURE());
-            $this->getHandler()->cancel();
-            return;
-        }
-        $seconds = 5 - $this->tick;
-        $this->player->sendTitle("§cYou Died", "§7Respawning in §a{$seconds} §7seconds");
-        $this->tick++;
+        try {
+            if ($this->tick === self::RESPAWN_TIME) {
+                $this->player->sendTitle("§aRespawning...");
+                $session = Manager::getInstance()->getSessionManager()->getSession($this->player);
+                $position = $session->getTeam()->getRandomSpawnPosition();
+                $session->getSelectedKit()->setKit($this->player);
+                $this->player->setHealth(20);
+                $this->player->teleport($position);
+                $this->player->setGamemode(GameMode::ADVENTURE());
+                $this->getHandler()->cancel();
+                return;
+            }
+            $seconds = 5 - $this->tick;
+            $this->player->sendTitle("§cYou Died", "§7Respawning in §a{$seconds} §7seconds");
+            $this->tick++;
+        }catch (\Throwable $error){}
     }
 
 }

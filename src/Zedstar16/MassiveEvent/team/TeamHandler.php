@@ -9,6 +9,8 @@ class TeamHandler
 
     public const TEAM_NAMES = ["Red", "Yellow", "Green", "Blue"];
 
+    public const TEAM_COLORS = ["§c", "§e", "§a", "§b"];
+
     /** @var Team[] */
     private array $teams = [];
 
@@ -38,6 +40,10 @@ class TeamHandler
         return $this->teams[$team_id];
     }
 
+    public function getAllTeams() : array{
+        return $this->teams;
+    }
+
 
     /**
      * Simple algorithm designed to figure out which team has the least players.
@@ -52,7 +58,8 @@ class TeamHandler
         foreach ($this->teams as $team) {
             $memberCount = count($team->getTeamMembers());
             if ($memberCount <= $team_with_least_members[1]) {
-                $team_with_least_members[$team->getTeamId()] = $memberCount;
+                $team_with_least_members[0] = $team->getTeamId();
+                $team_with_least_members[1]= $memberCount;
             }
         }
         $chosen_team = $this->teams[$team_with_least_members[0]];
@@ -61,6 +68,7 @@ class TeamHandler
         // The purpose of saving the team the player is assigned is so that if they relog
         // they will be assigned the same team they started off with
         $this->player_data[$player->getName()] = $chosen_team->getTeamId();
+        $player->sendMessage("§6You have been randomly assigned to the ".$chosen_team->getTeamColor().$chosen_team->getTeamName()." §aTeam!");
         return $chosen_team;
     }
 
@@ -69,8 +77,8 @@ class TeamHandler
         return isset($this->player_data[$player->getName()]);
     }
 
-    public function getAssignedTeam(Player $player){
-        return $this->player_data[$player->getName()];
+    public function getAssignedTeam(Player $player) : ?Team{
+        return $this->teams[$this->player_data[$player->getName()]] ?? null;
     }
 
 
